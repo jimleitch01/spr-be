@@ -15,6 +15,11 @@ node {
         checkout scm
     }
 
+    stage('InternalTests'){
+            ./mvnw test
+    }
+
+
     stage('AzureBuild'){
     withCredentials([azureServicePrincipal('test-rig-demo-jenkins')]) {
     
