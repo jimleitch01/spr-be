@@ -16,7 +16,7 @@ node {
     }
 
     stage('InternalTests'){
-            ./mvnw  test
+            sh './mvnw  test'
     }
 
 
