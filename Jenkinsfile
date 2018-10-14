@@ -19,13 +19,26 @@ node {
             sh './mvnw  test'
     }
 
-
     stage('AzureBuild'){
-    withCredentials([azureServicePrincipal('test-rig-demo-jenkins')]) {
-    
+    withCredentials([azureServicePrincipal('test-rig-demo-jenkins')]) {  
         sh 'az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET -t $AZURE_TENANT_ID'
         sh 'az acr build --file Dockerfile --subscription  ${SUBSCRIPTION_ID}   --registry ${ACR_NAME} --image ${APP_NAME}:${BRANCH_NAME} .'
     }}
+
+    stage('TestiFi TestSet1'){
+            sh 'sleep 5'
+    }
+
+    stage('TestiFi TestSet2'){
+            sh 'sleep 5'
+    }
+
+    stage('TestiFi TestSet3'){
+            sh 'sleep 5'
+    }
+
+
+
 }
 
 // stage('InitPopulator'){
