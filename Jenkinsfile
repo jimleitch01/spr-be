@@ -8,6 +8,8 @@ node {
         env.APP_NAME = "spr-be"
         env.ACR_NAME = "testrigregistry"
         env.SUBSCRIPTION_ID = "57b13db8-88cf-4fe6-924b-ae10dc6fadee"
+        env.AKS_NAME = "demo-aks"
+        env.RESOURCE_GROUP = "demo-rg"
 	env.BRANCH_NAME = env.BRANCH_NAME.replaceAll('/','_')
     }
 
@@ -15,7 +17,7 @@ node {
         checkout scm
     }
 
-    stage('InternalTests'){
+    stage('SelfTests'){
             sh './mvnw  test'
     }
 
@@ -25,15 +27,15 @@ node {
         sh 'az acr build --file Dockerfile --subscription  ${SUBSCRIPTION_ID}   --registry ${ACR_NAME} --image ${APP_NAME}:${BRANCH_NAME} .'
     }}
 
-    stage('TestiFi TestSet1'){
+    stage('testifiSet1'){
             sh 'sleep 5'
     }
 
-    stage('TestiFi TestSet2'){
+    stage('testifiSet2'){
             sh 'sleep 5'
     }
 
-    stage('TestiFi TestSet3'){
+    stage('testifiSet3'){
             sh 'sleep 5'
     }
 
@@ -41,40 +43,40 @@ node {
 
 }
 
-// stage('InitPopulator'){
-//     withCredentials([azureServicePrincipal('test-rig-demo-jenkins')]) {
-//         sh '''
-//             set -e
-//             az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET -t $AZURE_TENANT_ID
-//             az aks get-credentials --resource-group lias-omnia-dev-aks-cicd-mvp-rg --subscription ad08cb79-9b11-4db3-91c2-91f2ccec68eb   --name lias-omnia-dev-aks-cicd-mvp-aks
-//             rm -rf ~/DROPDOWNS/
-//         '''
-//     }}
+stage('InitPopulator'){
+    withCredentials([azureServicePrincipal('test-rig-demo-jenkins')]) {
+        sh '''
+            set -e
+            az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET -t $AZURE_TENANT_ID
+            az aks get-credentials --resource-group ${RESOURCE_GROUP} --subscription ${SUBSCRIPTION_ID}   --name ${AKS_NAME}
+            rm -rf ~/DROPDOWNS/
+        '''
+    }}
  
-//     stage('PopulateNamespaces'){
-//             sh '''
-//                 set -e
-//                 for NAMESPACE in $(kubectl get namespaces -o json | jq -r '.items[].metadata | select(.name | startswith("self-")) | .name ')
-//                 do
-//                     echo NAMESPACE is $NAMESPACE
-//                     mkdir -p ~/DROPDOWNS/namespaces/${NAMESPACE}
-//                 done
-//             '''
-//     }
+    stage('PopulateNamespaces'){
+            sh '''
+                set -e
+                for NAMESPACE in $(kubectl get namespaces -o json | jq -r '.items[].metadata | select(.name | startswith("self-")) | .name ')
+                do
+                    echo NAMESPACE is $NAMESPACE
+                    mkdir -p ~/DROPDOWNS/namespaces/${NAMESPACE}
+                done
+            '''
+    }
  
-//     stage('PopulateRepos'){
-//         sh '''
-//             set -e
-//             for REPOSITORY in $(az acr repository list --subscription ad08cb79-9b11-4db3-91c2-91f2ccec68eb --name liasomniadevakscicdmvpacr | jq -r '.[]')
-//             do
-//                 echo REPO is $REPOSITORY
-//                 for TAG in $(az acr repository show-tags --subscription ad08cb79-9b11-4db3-91c2-91f2ccec68eb --name liasomniadevakscicdmvpacr --repository $REPOSITORY | jq -r .[])
-//                 do
-//                     mkdir -p ~/DROPDOWNS/apps/$REPOSITORY/$TAG
-//                 done
-//             done
-//         '''
-//     }
+    stage('PopulateRepos'){
+        sh '''
+            set -e
+            for REPOSITORY in $(az acr repository list --subscription ${SUBSCRIPTION_ID} --name ${ACR_NAME} | jq -r '.[]')
+            do
+                echo REPO is $REPOSITORY
+                for TAG in $(az acr repository show-tags --subscription ${SUBSCRIPTION_ID} --name ${ACR_NAME} --repository $REPOSITORY | jq -r .[])
+                do
+                    mkdir -p ~/DROPDOWNS/apps/$REPOSITORY/$TAG
+                done
+            done
+        '''
+    }
 
  
 
