@@ -43,30 +43,20 @@ node {
 
 }
 
-stage('InitPopulator'){
+stage('DropdownPopulator'){
     withCredentials([azureServicePrincipal('test-rig-demo-jenkins')]) {
         sh '''
             set -e
             az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET -t $AZURE_TENANT_ID
             az aks get-credentials --resource-group ${RESOURCE_GROUP} --subscription ${SUBSCRIPTION_ID}   --name ${AKS_NAME}
             rm -rf ~/DROPDOWNS/
-        '''
-    }}
  
-    stage('PopulateNamespaces'){
-            sh '''
-                set -e
-                for NAMESPACE in $(kubectl get namespaces -o json | jq -r '.items[].metadata | select(.name | startswith("self-")) | .name ')
-                do
-                    echo NAMESPACE is $NAMESPACE
-                    mkdir -p ~/DROPDOWNS/namespaces/${NAMESPACE}
-                done
-            '''
-    }
- 
-    stage('PopulateRepos'){
-        sh '''
-            set -e
+            for NAMESPACE in $(kubectl get namespaces -o json | jq -r '.items[].metadata | select(.name | startswith("self-")) | .name ')
+            do
+                echo NAMESPACE is $NAMESPACE
+                mkdir -p ~/DROPDOWNS/namespaces/${NAMESPACE}
+            done
+
             for REPOSITORY in $(az acr repository list --subscription ${SUBSCRIPTION_ID} --name ${ACR_NAME} | jq -r '.[]')
             do
                 echo REPO is $REPOSITORY
