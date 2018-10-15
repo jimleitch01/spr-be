@@ -1,5 +1,5 @@
-FROM maven:3-jdk-8 AS build  
-#FROM testrigregistry.azurecr.io/spr-be:seeder AS build  
+#FROM maven:3-jdk-8 AS build  
+FROM testrigregistry.azurecr.io/spr-be:seeder AS build  
 
 COPY src /usr/src/app/src  
 COPY pom.xml /usr/src/app  
