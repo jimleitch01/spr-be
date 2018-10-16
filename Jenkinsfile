@@ -10,7 +10,7 @@ node {
         env.SUBSCRIPTION_ID = "57b13db8-88cf-4fe6-924b-ae10dc6fadee"
         env.AKS_NAME = "demo-aks"
         env.RESOURCE_GROUP = "demo-rg"
-	env.BRANCH_NAME = env.BRANCH_NAME.replaceAll('/','_')
+	    env.BRANCH_NAME = env.BRANCH_NAME.replaceAll('/','_')
     }
 
     stage('GitCheckout'){
@@ -22,7 +22,7 @@ node {
     }
 
     stage('ManifestCheck'){
-            sh './mvnw  test'
+            sh 'sleep 5'
     }
 
 
