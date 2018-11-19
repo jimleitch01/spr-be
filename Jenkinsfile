@@ -6,7 +6,7 @@
 node {
     stage('Init Stage'){
         env.APP_NAME = "spr-be"
-        env.ACR_NAME = "testrigregistry"
+        env.ACR_NAME = "testrigresistry"
         env.SUBSCRIPTION_ID = "57b13db8-88cf-4fe6-924b-ae10dc6fadee"
 	env.BRANCH_NAME = env.BRANCH_NAME.replaceAll('/','_')
     }
