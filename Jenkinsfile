@@ -18,7 +18,7 @@ node {
     }
 
     stage('SelfTests'){
-            sh './mvnw  test'
+            sh 'docker run -it --rm  -v "$(pwd)":/usr/src/mymaven -w /usr/src/mymaven maven:3.3-jdk-8 mvn test'
     }
 
     stage('ManifestCheck'){
