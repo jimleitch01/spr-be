@@ -18,7 +18,7 @@ node {
     }
 
     stage('SelfTests'){
-            sh './mvnw  test'
+            sh './mvnw  test -Djdk.net.URLClassPath.disableClassPathURLCheck=true'
     }
 
     stage('ManifestCheck'){
